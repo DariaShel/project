@@ -21,7 +21,7 @@ struct Tree {
 struct L1 * list=NULL;
 
 int super_strcmp(char * s1,char * s2);
-struct L1 * search(struct TreeNode * cur,struct L1 * list,char * s);
+void search(struct TreeNode * cur,char * s);
 struct L1 * L1_add(struct L1 * list,char * s);
 char * my_strcopy(char * p);
 int len_str(char * a);
@@ -30,6 +30,7 @@ void treeAdd (struct Tree *tree, char *s);
 void treePrintNode (struct TreeNode *cur);
 void treePrint (struct Tree *tree);
 void prn(struct L1 * l);
+void global_add(char * s);
 
 int main () {
 	FILE *f;
@@ -50,7 +51,7 @@ int main () {
 	//treePrint(tree);
 	printf("Введите слово: ");
 	scanf("%s",k);
-	list=search(tree->root,list,bubblepros(k));
+	search(tree->root,bubblepros(k));
 	prn(list);
 	return 0;
 	
@@ -61,17 +62,16 @@ struct L1 * L1_add(struct L1 * list,char * s){
 	struct L1 * tmp;
 	cur=(struct L1 *)malloc(sizeof(struct L1));
 	cur->s=my_strcopy(s);
-	tmp=list;
-	if(tmp!=NULL){
-		cur->next=NULL;
-		tmp->next=cur;
-		tmp=cur;
-	}
+	cur->next=NULL;
+	if(list==NULL){list=cur;}
 	else{
-		cur->next=NULL;
-		list=cur;
+		tmp=list;
+		while(tmp->next!=NULL){
+			tmp=tmp->next;
+		}
+		tmp->next=cur;
 	}
-	printf("%s\n",cur->s);
+	//printf("%s\n",cur->s);
 	return list;
 }
 
@@ -187,16 +187,20 @@ int super_strcmp(char * s1,char * s2){
 	return 0;
 }
 
-struct L1 * search(struct TreeNode * cur,struct L1 * list,char * s){
+void search(struct TreeNode * cur,char * s){
 	int tmp=0;
 	if (cur == NULL) {
-		return list;
+		return;
 	}
-	list=search(cur->left,list,s);
+	search(cur->left,s);
 	tmp=super_strcmp(s,cur->val);
-	if(tmp==0){list=L1_add(list,cur->word);}
-	list=search(cur->right,list,s);
-	return list;
+	if(tmp==0){global_add(cur->word);}
+	search(cur->right,s);
+	return;
+}
+
+void global_add(char * s){
+	list=L1_add(list,s);
 }
 
 void treePrint (struct Tree *tree) {
