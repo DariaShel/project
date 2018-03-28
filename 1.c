@@ -4,6 +4,7 @@
 
 struct L1{
 	char * s;
+	int v;
 	struct L1 * next;
 };
 
@@ -31,6 +32,8 @@ void treePrintNode (struct TreeNode *cur);
 void treePrint (struct Tree *tree);
 void prn(struct L1 * l);
 void global_add(char * s);
+void L1_Search(char * s,struct L1 * begin);
+int my_strcmp(char * s1,char * s2);
 
 int main () {
 	FILE *f;
@@ -48,13 +51,33 @@ int main () {
 	while (fscanf(f, "%s", s) == 1) {
 		treeAdd (tree, s);
 	}
-	//treePrint(tree);
 	printf("Введите слово: ");
 	scanf("%s",k);
 	search(tree->root,bubblepros(k));
+	printf("Введите слова, которые можно составить из этого слова\n Когда закончите, введите '0':\n");
+	while(*k!='0'){
+		scanf("%s",k);
+		if(*k!='0'){L1_Search(k,list);}
+	}
 	prn(list);
 	return 0;
 	
+}
+
+void L1_Search(char * s,struct L1 * begin){
+	struct L1 * cur=(struct L1 *)malloc(sizeof(struct L1));
+	struct L1 * tmp;
+	tmp=begin;
+	while((tmp->next!=NULL)&&(my_strcmp(s,tmp->s)!=0)){tmp=tmp->next;}
+	if(my_strcmp(s,tmp->s)==0){
+		begin->v=1;
+	}
+	else{
+		cur->v=-1;
+		cur->s=my_strcopy(s);
+		cur->next=NULL;
+		tmp->next=cur;
+	}
 }
 
 struct L1 * L1_add(struct L1 * list,char * s){
@@ -62,6 +85,7 @@ struct L1 * L1_add(struct L1 * list,char * s){
 	struct L1 * tmp;
 	cur=(struct L1 *)malloc(sizeof(struct L1));
 	cur->s=my_strcopy(s);
+	cur->v=0;
 	cur->next=NULL;
 	if(list==NULL){list=cur;}
 	else{
@@ -71,7 +95,6 @@ struct L1 * L1_add(struct L1 * list,char * s){
 		}
 		tmp->next=cur;
 	}
-	//printf("%s\n",cur->s);
 	return list;
 }
 
@@ -81,12 +104,17 @@ void prn(struct L1 * l){
 	struct L1 * tmp;
 	printf("\n");
 	tmp=l;
-	if(l==NULL){printf("NULL");}
-	while(tmp!=NULL){
-		printf("%s\n",tmp->s);
+	printf("Ещё возможные слова:\n");
+	while((tmp!=NULL)&&(tmp->v>=0)){
+		if(tmp->v==0){printf("<%s>\n",tmp->s);}
 		tmp=tmp->next;
 	}
 	printf("\n");
+	printf("Неверно введённые слова:\n");
+	while((tmp!=NULL)&&(tmp->v==-1)){
+		printf("<%s>\n",tmp->s);
+		tmp=tmp->next;
+	}
 }
 
 char * my_strcopy(char * p){
