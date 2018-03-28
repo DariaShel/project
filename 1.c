@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
 struct L1{
 	char * s;
@@ -70,7 +69,7 @@ void L1_Search(char * s,struct L1 * begin){
 	tmp=begin;
 	while((tmp->next!=NULL)&&(my_strcmp(s,tmp->s)!=0)){tmp=tmp->next;}
 	if(my_strcmp(s,tmp->s)==0){
-		begin->v=1;
+		tmp->v=1;
 	}
 	else{
 		cur->v=-1;
@@ -97,8 +96,6 @@ struct L1 * L1_add(struct L1 * list,char * s){
 	}
 	return list;
 }
-
-
 
 void prn(struct L1 * l){
 	struct L1 * tmp;
